@@ -2,6 +2,7 @@
 
 import stellagama
 
+
 class Star:
     def __init__(self, startype, gas_giant, starport, naval, scout, names, hex_column, hex_row):
         self.startype = startype
@@ -25,7 +26,7 @@ class Star:
 
     def name_converter(self):
         new_name = f"{self.name: <{7}}".upper()
-        self.mapname =(new_name[:7]) if len(new_name) > 7 else new_name
+        self.mapname = (new_name[:7]) if len(new_name) > 7 else new_name
 
 
 class Player:
@@ -33,16 +34,21 @@ class Player:
         self.coordinates = (1, 1)
         self.starmap = starmap
         self.location = starmap[self.coordinates[0]][self.coordinates[1]]
-    def move_player (self, direction):
-        self.coordinates = (self.location.neighbors[direction][0], self.location.neighbors[direction][1])
-        self.location = starmap[self.coordinates[0]][self.coordinates[1]]
-    def locator (self):
-        print(self.location.hex)
+
+    def jump(self, direction):
+        if starmap[self.location.neighbors[direction][0]][self.location.neighbors[direction][1]].startype != " ":
+            self.coordinates = (self.location.neighbors[direction][0], self.location.neighbors[direction][1])
+            self.location = starmap[self.coordinates[0]][self.coordinates[1]]
+        else:
+            print("No valid jump destination.")
+
+    def locator(self):
+        return self.location.hex
 
 
 def blank_map():
     starmap = {}
-    for column in range(0, 9):
+    for column in range(0, 11):
         starmap[column] = {}
         for map_row in range(0, 11):
             starmap[column][map_row] = Star(" ", " ", " ", " ", "_", "       ", 0, 0)
@@ -75,46 +81,7 @@ def hex_number(column, row, worldtype):
             return f"0{column}0{row}"
 
 
-# def read_json_subsector(jsonfile):
-#     starmap = blank_map()
-#     with open(jsonfile, 'r') as subsector:
-#         data = json.load(subsector)
-#         for column in data:
-#             for row in data[column]:
-#                 if row in data[column]:
-#                     if data[column][row]["hydrographics"] > 0:
-#                         world_type = "@"
-#                     elif data[column][row]["size"] == 0:
-#                         world_type = "#"
-#                     else:
-#                         world_type = "O"
-#                     if data[column][row]["gas_giants"] == "G":
-#                         gas_giant = "*"
-#                     else:
-#                         gas_giant = " "
-#                     if data[column][row]["base"] == "A":
-#                         scout_base = "^"
-#                         naval_base = "*"
-#                     elif data[column][row]["base"] == "N":
-#                         naval_base = "*"
-#                     elif data[column][row]["base"] == "S":
-#                         scout_base = "^"
-#                     else:
-#                         scout_base = "_"
-#                         naval_base = " "
-#                     starmap[int(column)][int(row)] = Star(world_type, gas_giant, data[column][row]["starport"],
-#                                                            naval_base, scout_base,
-#                                                            data[column][row]["name"])
-#                 else:
-#                     starmap[int(column)][int(row)] = Star(" ", " ", " ", " ", "_", "       ")
-#     for column in starmap:
-#         for row in starmap[column]:
-#             if row not in starmap[column]:
-#                 starmap[column][row] = Star(" ", " ", " ", " ", "_", "       ")
-#     return starmap
-
-
-def starmap_string(starmap):
+def starmap_renderer(starmap):
     global row
     global column
     stellagama.clear_screen()
@@ -130,12 +97,29 @@ def starmap_string(starmap):
     return star_string
 
 
+def map_menu(player, starmap):
+    print(starmap_renderer(starmap) + "\n")
+    print (f"LOCATION: {player.locator()}")
+    destination = 0
+    while True:
+        command = input("ENTER COMMAND: ").upper()
+        if command == "EXIT":
+            print("EXITING MAP MENU")
+            quit()
+        else:
+            stellagama.clear_screen()
+            print(starmap_renderer(starmap) + "\n")
+            print(f"LOCATION: {player.locator()}")
+            print("INVALID COMMAND")
+
+
 if __name__ == '__main__':
     starmap = blank_map()
     starmap[1][1] = Star("@", "*", "A", "*", "^", "TEST   ", 1, 1)
     starmap[2][1] = Star("O", " ", "C", " ", " ", "TEST2  ", 2, 1)
     starmap[1][2] = Star("O", " ", "D", " ", " ", "TEST3  ", 1, 2)
+    starmap[2][5] = Star("O", " ", "D", " ", " ", "TEST4  ", 1, 2)
     player = Player(starmap)
-    player.move_player(3)
-    player.locator()
-    print(player.location.startype)
+    map_menu(player, starmap)
+
+
