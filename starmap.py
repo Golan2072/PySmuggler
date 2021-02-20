@@ -25,7 +25,7 @@ class Star:
                           (self.column, self.row + 1), (self.column - 1, self.row), (self.column - 1, self.row - 1)]
 
     def name_converter(self):
-        new_name = f"{self.name: <{7}}".upper()
+        new_name = f"{self.names: <{7}}".upper()
         self.mapname = (new_name[:7]) if len(new_name) > 7 else new_name
 
 
@@ -39,11 +39,9 @@ class Player:
         if starmap[self.location.neighbors[direction][0]][self.location.neighbors[direction][1]].startype != " ":
             self.coordinates = (self.location.neighbors[direction][0], self.location.neighbors[direction][1])
             self.location = starmap[self.coordinates[0]][self.coordinates[1]]
+            print(f"JUMP to {self.location.names} SUCCESSFUL")
         else:
-            print("No valid jump destination.")
-
-    def locator(self):
-        return self.location.hex
+            print("NO VALID JUMP DESTINATION")
 
 
 def blank_map():
@@ -84,8 +82,7 @@ def hex_number(column, row, worldtype):
 def starmap_renderer(starmap):
     global row
     global column
-    stellagama.clear_screen()
-    star_string = f" HEXACORP OS v.21.1\n\n CEPHEUS SECTOR\n\n {base_row('  _____       ')}\n"
+    star_string = f"\n HEXACORP OS v.21.1\n\n CEPHEUS SECTOR\n\n {base_row('  _____       ')}\n"
 
     for row in range(1, 11):
         star_string += f"  /  {starmap[1][row].starport} {starmap[1][row].gas_giant}\{starmap[2][row - 1].names}/  {starmap[3][row].starport} {starmap[3][row].gas_giant}\{starmap[4][row - 1].names}/  {starmap[5][row].starport} {starmap[5][row].gas_giant}\{starmap[6][row - 1].names}/  {starmap[7][row].starport} {starmap[7][row].gas_giant}\{starmap[8][row - 1].names}/ \n"
@@ -97,20 +94,54 @@ def starmap_renderer(starmap):
     return star_string
 
 
+def command_prompt(commands, renderer):
+    print("")
+    print(f"AVAILABLE COMMANDS: {' / '.join(commands)} / EXIT")
+    command = input("ENTER COMMAND: ").upper()
+    if command in commands:
+        return command
+    elif command == "EXIT":
+        print("TERMINATING PROGRAM")
+        quit()
+    else:
+        stellagama.clear_screen()
+        print(renderer + "\n")
+        print(f"LOCATION: {player.location.hex} {player.location.names}\n")
+        print("INVALID COMMAND")
+
+
+def starmap_screen_render(starmap):
+    stellagama.clear_screen()
+    print(starmap_renderer(starmap) + "\n")
+    print(f"LOCATION: {player.location.hex} {player.location.names}\n")
+
+
+def star_data(starmap, renderer, stars):
+    data_star = input("ENTER STAR COORDINATES: ")
+    if data_star in stars:
+        star = starmap[int(data_star[1])][int(data_star[3])]
+        print(f"STAR DATA: STAR TYPE {star.startype}")
+    else:
+        stellagama.clear_screen()
+        print(renderer + "\n")
+        print(f"LOCATION: {player.location.hex} {player.location.names}\n")
+        print("INVALID INPUT")
+
+
 def map_menu(player, starmap):
     print(starmap_renderer(starmap) + "\n")
-    print (f"LOCATION: {player.locator()}")
+    print(f"LOCATION: {player.location.hex} {player.location.names}\n")
     destination = 0
     while True:
-        command = input("ENTER COMMAND: ").upper()
-        if command == "EXIT":
-            print("EXITING MAP MENU")
-            quit()
+        command = command_prompt(["JUMP", "DATA"], starmap_renderer(starmap))
+        if command == "JUMP":
+            starmap_screen_render(starmap)
+            print("JUMPING...")
+        elif command == "DATA":
+            starmap_screen_render(starmap)
+            star_data(starmap, starmap_renderer(starmap), ["0101", "0201", "0102", "0205"])
         else:
-            stellagama.clear_screen()
-            print(starmap_renderer(starmap) + "\n")
-            print(f"LOCATION: {player.locator()}")
-            print("INVALID COMMAND")
+            pass
 
 
 if __name__ == '__main__':
@@ -121,5 +152,3 @@ if __name__ == '__main__':
     starmap[2][5] = Star("O", " ", "D", " ", " ", "TEST4  ", 1, 2)
     player = Player(starmap)
     map_menu(player, starmap)
-
-
