@@ -1,6 +1,9 @@
 # PySmuggler
 Interstellar text adventure
 
+v0.02.1 - February 21st, 2021
+- Command prompt improved.
+
 v0.02 - February 20th, 2021
 - Basic map menu loop added.
 
