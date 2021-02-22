@@ -1,6 +1,11 @@
 # PySmuggler
 Interstellar text adventure
 
+v0.03 - February 22nd, 2021
+- Main program file added for clearer product design.
+- Jump procedure now accept player input and detects out-of-range and invalid targets.
+- starmap.py renamed map.py to avoid confusion with the "starmap" parameter in various functions and objects.
+
 v0.02.1 - February 21st, 2021
 - Command prompt improved.
 
