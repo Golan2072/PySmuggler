@@ -1,6 +1,10 @@
 # PySmuggler
 Interstellar text adventure
 
+v0.04 - February 23rd, 2021
+- 2-hex jumps implemented.
+- Basic procedural starmap logic added!
+
 v0.03 - February 22nd, 2021
 - Main program file added for clearer product design.
 - Jump procedure now accept player input and detects out-of-range and invalid targets.
