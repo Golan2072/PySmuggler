@@ -9,6 +9,7 @@ class Player:
         self.coordinates = (1, 1)
         self.starmap = starmap
         self.location = starmap[self.coordinates[0]][self.coordinates[1]]
+        self.jump_drive = 2
 
     def jump(self):
         coordinates_input = str(input("INPUT COORDINATES (4 DIGITS HEX LOCATION): "))
@@ -17,6 +18,13 @@ class Player:
             self.coordinates = coordinates
             self.location = self.starmap[self.coordinates[0]][self.coordinates[1]]
             print(f"JUMP to {self.location.names} SUCCESSFUL")
+        elif coordinates in self.location.second_neighbors and self.starmap[coordinates[0]][coordinates[1]].startype != " ":
+            if self.jump_drive == 2:
+                self.coordinates = coordinates
+                self.location = self.starmap[coordinates[0]][self.coordinates[1]]
+                print(f"JUMP to {self.location.names} SUCCESSFUL")
+            else:
+                print("DESTINATION OUT OF RANGE")
         elif self.starmap[coordinates[0]][coordinates[1]].startype != " ":
             print("DESTINATION NOT IN RANGE")
         else:

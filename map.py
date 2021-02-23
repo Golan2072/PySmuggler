@@ -2,40 +2,19 @@
 
 import stellagama
 import main
+from stargen import Star
 
 
-class Star:
-    def __init__(self, startype, gas_giant, starport, naval, scout, names, hex_column, hex_row):
-        self.startype = startype
-        self.gas_giant = gas_giant
-        self.starport = starport
-        self.naval = naval
-        self.scout = scout
-        self.names = names
-        self.column = hex_column
-        self.row = hex_row
-        if self.column == 10 and self.row != 10:
-            self.hex = f"100{self.row}"
-        elif self.column != 10 and self.row == 10:
-            self.hex = f"0{self.column}10"
-        elif self.column == 10 and self.row == 10:
-            self.hex = "1010"
-        else:
-            self.hex = f"0{self.column}0{self.row}"
-        self.neighbors = ["", (self.column, self.row - 1), (self.column + 1, self.row - 1), (self.column + 1, self.row),
-                          (self.column, self.row + 1), (self.column - 1, self.row), (self.column - 1, self.row - 1)]
-
-    def name_converter(self):
-        new_name = f"{self.names: <{7}}".upper()
-        self.mapname = (new_name[:7]) if len(new_name) > 7 else new_name
-
-
-def blank_map():
+def map_gen():
     starmap = {}
     for column in range(0, 11):
         starmap[column] = {}
         for map_row in range(0, 11):
-            starmap[column][map_row] = Star(" ", " ", "   ", " ", "_", "       ", 0, 0)
+            starmap[column][map_row] = Star(column, map_row)
+    starmap[1][1].starport = "III"
+    starmap[1][1].startype = "@"
+    starmap[1][1].names = "PLCHLDR"
+    starmap[1][1].gas_giant = "*"
     return starmap
 
 
@@ -115,10 +94,6 @@ def map_menu(player, starmap):
 
 
 if __name__ == '__main__':
-    starmap = blank_map()
-    starmap[1][1] = Star("@", "*", " V ", "*", "^", "TEST   ", 1, 1)
-    starmap[2][1] = Star("O", " ", " IV", " ", " ", "TEST2  ", 2, 1)
-    starmap[1][2] = Star("O", " ", "III", " ", " ", "TEST3  ", 1, 2)
-    starmap[2][5] = Star("O", " ", " I ", " ", " ", "TEST4  ", 1, 2)
+    starmap = map_gen()
     player = main.Player(starmap)
     map_menu(player, starmap)
